@@ -23,6 +23,12 @@ if (!$ytURL) {
 
 $downloadURL = yt-dlp.exe -f 140 $ytURL --get-url
 
+if (!$downloadURL) {
+    Write-Host "Invalid URL"
+    Pause
+    Exit
+}
+
 Add-Type -AssemblyName System.Windows.Forms
 $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{
     InitialDirectory = $PWD
