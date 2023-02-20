@@ -24,13 +24,17 @@ if (!$ytURL) {
 $downloadURL = yt-dlp.exe -f 140 $ytURL --get-url
 
 Add-Type -AssemblyName System.Windows.Forms
-$FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory = [Environment]::GetFolderPath('Desktop') }
+$FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+    InitialDirectory = [Environment]::GetFolderPath('Desktop')
+    Filter = "Image (*.png)|*.png|Image (*.jpg)|*.jpg"
+    Title = "Select a image"
+ }
 
 
 Write-Host "Now gonna ask file metadata, make sure you have have the cover file."
-$coverFile = $FileBrowser.ShowDialog()
+$test = $FileBrowser.ShowDialog()
 
-TestValid($coverFile)
+TestValid($test)
 
 $titleFile = Read-Host "Title: "
 TestValid($titleFile)
@@ -41,5 +45,6 @@ TestValid($artistName)
 $genreName = Read-Host "Genre: "
 TestValid($genreName)
 
+ffmpeg.exe -i $downloadURL -i $FileBrowser.FileName -metadata title="$titleFile" -metadata album="$albumName" -metadata artist="$artistName" -metadata genre="$genreName" -c:a flac -map 0 -map 1 -disposition:v attached_pic -compression_level 12 -ar 44100 "01. $titleFile.flac"
 Pause
 Exit
